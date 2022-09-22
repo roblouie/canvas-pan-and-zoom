@@ -30,12 +30,8 @@ window.onload = () => {
     }
 
     function getTransformedPoint(x, y) {
-        const transform = context.getTransform();
-        const inverseZoom = 1 / transform.a;
-        
-        const transformedX = inverseZoom * x - inverseZoom * transform.e;
-        const transformedY = inverseZoom * y - inverseZoom * transform.f;
-        return { x: transformedX, y: transformedY };
+      const originalPoint = new DOMPoint(x, y);
+      return context.getTransform().invertSelf().transformPoint(originalPoint);
     }
 
     function onMouseDown(event) {
@@ -73,17 +69,4 @@ window.onload = () => {
     canvas.addEventListener('mousemove', onMouseMove);
     canvas.addEventListener('mouseup', onMouseUp);
     canvas.addEventListener('wheel', onWheel);
-
-    // If you are also skewing your canvas, you'll want to use the full inverse
-    // transformation matrix, then follow the forumla for 2d affine transformation:
-    // x2 = a*x1 + c*y1 + e
-    // y2 = b*x1 + d*y1 + f
-    //
-    // Where x2, y2 is the transformed point and x1, y1 is the original point.
-    function fullGetTransformedPoint(x, y) {
-        const inverseTransform = context.getTransform().invertSelf();
-        const transformedX = inverseTransform.a * x + inverseTransform.c * y + inverseTransform.e;
-        const transformedY = inverseTransform.b * x + inverseTransform.d * y + inverseTransform.f;
-        return { x: transformedX, y: transformedY };
-    }
 }
